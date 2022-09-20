@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/opjav/AndroidStudioProjects/Capitals/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.336" />
+        <entry key="..\:/Users/opjav/AndroidStudioProjects/Capitals/app/src/main/res/layout/activity_categories.xml" value="0.28396739130434784" />
+        <entry key="..\:/Users/opjav/AndroidStudioProjects/Capitals/app/src/main/res/layout/activity_main.xml" value="0.28396739130434784" />
+        <entry key="..\:/Users/opjav/AndroidStudioProjects/Capitals/app/src/main/res/layout/activity_start_game.xml" value="0.3489583333333333" />
+        <entry key="..\:/Users/opjav/AndroidStudioProjects/Capitals/app/src/main/res/layout/activity_start_game2.xml" value="0.28396739130434784" />
+        <entry key="..\:/Users/opjav/AndroidStudioProjects/Capitals/app/src/main/res/layout/activity_start_game3.xml" value="0.28396739130434784" />
+        <entry key="..\:/Users/opjav/AndroidStudioProjects/Capitals/app/src/main/res/layout/category_1.xml" value="0.3489583333333333" />
+        <entry key="..\:/Users/opjav/AndroidStudioProjects/Capitals/app/src/main/res/layout/content_start_game.xml" value="0.28396739130434784" />
+        <entry key="..\:/Users/opjav/AndroidStudioProjects/Capitals/app/src/main/res/layout/items.xml" value="0.33" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
