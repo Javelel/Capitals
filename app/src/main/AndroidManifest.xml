@@ -20,7 +20,8 @@
             android:name=".StartGame"
             android:exported="false"
             android:label="@string/title_activity_start_game"
-            android:theme="@style/Theme.Capitals.NoActionBar" />
+            android:theme="@style/Theme.Capitals.NoActionBar"
+            android:screenOrientation="landscape"/>
         <activity
             android:name=".MainActivity"
             android:exported="true">

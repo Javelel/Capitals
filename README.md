@@ -1,2 +1,2 @@
 # Capitals
-Simlpe android app
+Simple android app

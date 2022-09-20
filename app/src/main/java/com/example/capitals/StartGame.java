@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -97,6 +98,7 @@ public class StartGame extends AppCompatActivity {
 		ConstraintLayout rowConLay = new ConstraintLayout(this);
 		TextView letter = new TextView(this);
 		EditText category = new EditText(this);
+		LinearLayout answersLay = new LinearLayout(this);
 		TextView points = new TextView(this);
 		ImageView vertLine = new ImageView(this);
 
@@ -108,10 +110,14 @@ public class StartGame extends AppCompatActivity {
 		letter.setTextColor(Color.BLACK);
 		letter.setId(View.generateViewId());
 
+		answersLay.setId(View.generateViewId());
+
 		category.setMaxLines(2);
 		category.setMaxWidth((int) getResources().getDisplayMetrics().density * 312);
 		category.setTextSize(30);
 		category.setTextColor(Color.BLACK);
+		category.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+		category.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
 		InputFilter[] filterArray = new InputFilter[3];
 		filterArray[0] = new InputFilter.LengthFilter(256);
 		filterArray[1] = new InputFilter.AllCaps();
@@ -125,24 +131,25 @@ public class StartGame extends AppCompatActivity {
 		};
 		category.setFilters(filterArray);
 		AutofitHelper.create(category);
-		category.setId(View.generateViewId());
+
 
 		points.setTextSize(30);
 		points.setTextColor(Color.BLACK);
 		points.setId(View.generateViewId());
 
 		rowConLay.addView(letter);
-		rowConLay.addView(category);
+		rowConLay.addView(answersLay);
 		rowConLay.addView(points);
+		answersLay.addView(category);
 
 		ConstraintSet conSet = new ConstraintSet();
 		conSet.clone(rowConLay);
-		conSet.connect(letter.getId(), ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 8);
+		conSet.connect(letter.getId(), ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 32);
 		conSet.connect(letter.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 20);
-		conSet.connect(category.getId(), ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT);
-		conSet.connect(category.getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT);
-		conSet.connect(category.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
-		conSet.connect(points.getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 64);
+		conSet.connect(answersLay.getId(), ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 48);
+		conSet.connect(answersLay.getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT,64);
+		conSet.connect(answersLay.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
+		conSet.connect(points.getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT);
 		conSet.connect(points.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 20);
 		conSet.applyTo(rowConLay);
 
@@ -154,6 +161,7 @@ public class StartGame extends AppCompatActivity {
 
 		TableRow vertLineRow = new TableRow(this);
 		ConstraintLayout vertLineLayout = new ConstraintLayout(this);
+		vertLineLayout.setLayoutParams(new TableRow.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT, 1f));
 		vertLineLayout.addView(vertLine);
 		vertLineRow.addView(vertLineLayout);
 
