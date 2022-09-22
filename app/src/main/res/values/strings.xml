@@ -23,4 +23,6 @@
     <string name="riversLakes">Rivers/Lakes</string>
     <string name="plantsText">Plants</string>
     <string name="animalsText">Animals</string>
+    <string name="totalPts">"TOTAL POINTS: "</string>
+    <string name="ready">ready</string>
 </resources>

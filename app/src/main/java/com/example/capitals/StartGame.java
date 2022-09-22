@@ -8,11 +8,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.InputFilter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -22,8 +20,6 @@ import android.widget.TextView;
 
 import java.util.Objects;
 import java.util.Random;
-
-import me.grantland.widget.AutofitHelper;
 
 public class StartGame extends AppCompatActivity {
 
@@ -36,7 +32,9 @@ public class StartGame extends AppCompatActivity {
 	TextView timeLeft;
 	ScrollView gameView;
 	TableLayout tabLay;
-	static final int TIME_FOR_ANSWER = 3;
+	static final int TIME_FOR_ANSWER = 10;
+	int totalPoints;
+	TextView totalPointsTxt;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +43,7 @@ public class StartGame extends AppCompatActivity {
 		Intent intent = getIntent();
 		chosenCategories = intent.getBooleanArrayExtra("categories");
 		numOfCategories = getNumOfCategories();
+		totalPoints = 0;
 	}
 
 	public void randomizeLetter(View view) {
@@ -60,12 +59,9 @@ public class StartGame extends AppCompatActivity {
 		handler.post(new Runnable() {
 
 			public void run() {
-				char lastLetter = i[0] ==0 ? alphabet.charAt(alphabet.length() - 1) : alphabet.charAt(i[0] - 1);
+				char lastLetter = i[0] == 0 ? alphabet.charAt(alphabet.length() - 1) : alphabet.charAt(i[0] - 1);
 				char letter = alphabet.charAt(i[0]);
-				StringBuilder alphTemp = new StringBuilder(alphabet);
-				alphTemp.deleteCharAt(i[0]++);
-				alphabet = alphTemp.toString();
-				if(i[0] >= alphabet.length()) {
+				if(i[0] >= alphabet.length()-1) {
 					i[0] = 0;
 				}
 				letterTxt.setText(String.valueOf(letter));
@@ -74,6 +70,13 @@ public class StartGame extends AppCompatActivity {
 					handler.postDelayed(this, 80);
 				} else {
 					chosenLetter = lastLetter;
+					StringBuilder alphTemp = new StringBuilder(alphabet);
+					if(i[0] == 0) {
+						alphTemp.deleteCharAt(alphTemp.length()-1);
+					} else {
+						alphTemp.deleteCharAt(i[0] - 1);
+					}
+					alphabet = alphTemp.toString();
 					try {
 						Thread.sleep(2000);
 					} catch (InterruptedException e) {
@@ -81,6 +84,7 @@ public class StartGame extends AppCompatActivity {
 					}
 					theGame();
 				}
+				i[0]++;
 			}
 		});
 	}
@@ -105,6 +109,7 @@ public class StartGame extends AppCompatActivity {
 			gameView = findViewById(R.id.gameView);
 			tabLay = findViewById(R.id.tabLay);
 			timeLeft = findViewById(R.id.timeLeftTxt);
+			totalPointsTxt = findViewById(R.id.totalPts);
 		} else {
 			setContentView(gameView);
 		}
@@ -113,12 +118,11 @@ public class StartGame extends AppCompatActivity {
 		TableRow tabRow = new TableRow(this);	// 1 Row = 1 round
 		ConstraintLayout rowConLay = new ConstraintLayout(this);	// Layout to fill the TableRow
 		TextView letter = new TextView(this);	//	random letter
-		Answer category = new Answer(this, 1);	//	answer
-		Answer[] answers = new Answer[numOfCategories];
+		Answer[] answers = new Answer[numOfCategories];	//	answers
 		LinearLayout answersLay = new LinearLayout(this);	//	Layout containing all the answers
-		LinearLayout categoryAndPointsLay = new LinearLayout(this);	//	Layout with a particular answer and points form it
+		LinearLayout[] answersAndPointsLay = new LinearLayout[numOfCategories];	//	Layouts with a particular answer and points form it
 		TextView points = new TextView(this);	//	points scored in a particular round
-		TextView categoryPoints = new TextView(this);	// points scored on each answer
+		TextView[] smallPoints = new TextView[numOfCategories];	// points scored on each answer
 		TableRow vertLineRow = new TableRow(this);	// row for the vertical line
 		ImageView vertLine = new ImageView(this);	// vertical line between each round
 
@@ -131,12 +135,8 @@ public class StartGame extends AppCompatActivity {
 		letter.setId(View.generateViewId());
 
 		answersLay.setId(View.generateViewId());
-		categoryAndPointsLay.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
-		categoryAndPointsLay.setOrientation(LinearLayout.VERTICAL);
+		answersLay.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
-		categoryPoints.setTextColor(Color.BLACK);
-		categoryPoints.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-		categoryPoints.setTextSize(15);
 
 		points.setTextSize(30);
 		points.setTextColor(Color.BLACK);
@@ -145,16 +145,35 @@ public class StartGame extends AppCompatActivity {
 		rowConLay.addView(letter);
 		rowConLay.addView(answersLay);
 		rowConLay.addView(points);
-		answersLay.addView(categoryAndPointsLay);
-		categoryAndPointsLay.addView(category);
-		categoryAndPointsLay.addView(categoryPoints);
+
+		int count = 0;
+		for (int i=0; i<chosenCategories.length; i++) {
+			if(chosenCategories[i]) {
+				answers[count] = new Answer(this, i);
+				smallPoints[count] = new TextView(this);
+				answersAndPointsLay[count] = new LinearLayout(this);
+
+				smallPoints[count].setTextSize(15);
+				smallPoints[count].setTextColor(Color.BLACK);
+				smallPoints[count].setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+				answersAndPointsLay[count].setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f));
+				answersAndPointsLay[count].setOrientation(LinearLayout.VERTICAL);
+				answersLay.addView(answersAndPointsLay[count]);
+				answersAndPointsLay[count].addView(answers[count]);
+				answersAndPointsLay[count].addView(smallPoints[count++]);
+			}
+		}
+
+
+		//categoryAndPointsLay.addView(category);
+		//categoryAndPointsLay.addView(categoryPoints);
 
 		ConstraintSet conSet = new ConstraintSet();
 		conSet.clone(rowConLay);
 		conSet.connect(letter.getId(), ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 32);
 		conSet.connect(letter.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 20);
-		conSet.connect(answersLay.getId(), ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 48);
-		conSet.connect(answersLay.getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT,64);
+		conSet.connect(answersLay.getId(), ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 128);
+		conSet.connect(answersLay.getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 128);
 		conSet.connect(answersLay.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
 		conSet.connect(points.getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT);
 		conSet.connect(points.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 20);
@@ -179,15 +198,28 @@ public class StartGame extends AppCompatActivity {
 					timeLeft.setText(String.valueOf(Integer.parseInt((String) timeLeft.getText()) - 1));
 					timerHandler.postDelayed(this, 1000);
 				} else {
-					category.setEnabled(false);
+					//category.setEnabled(false);
+
+					for (int i=0; i<numOfCategories; i++) {
+						answers[i].setEnabled(false);
+						if(answers[i].getText() != null && Objects.requireNonNull(answers[i].getText()).length() >= 1 && Objects.requireNonNull(answers[i].getText()).charAt(0) == chosenLetter) {
+							smallPoints[i].setText("15");
+						} else {
+							smallPoints[i].setText("0");
+						}
+					}
+
 					tabLay.addView(vertLineRow);
 
-					if(category.getText() != null && Objects.requireNonNull(category.getText()).length() >= 1 && Objects.requireNonNull(category.getText()).charAt(0) == chosenLetter) {
-						categoryPoints.setText("15");
-					} else {
-						categoryPoints.setText("0");
+					int pointsFromRound = 0;
+
+					for (TextView smallPoint: smallPoints) {
+						pointsFromRound += Integer.parseInt((String) smallPoint.getText());
 					}
-					points.setText(categoryPoints.getText());
+
+					points.setText(String.valueOf(pointsFromRound));
+					totalPoints += pointsFromRound;
+					totalPointsTxt.setText(String.valueOf(totalPoints));
 					Handler endOfRoundHandler = new Handler();
 					Runnable endOfRoundRunnable = () -> setContentView(R.layout.activity_start_game);
 					endOfRoundHandler.postDelayed(endOfRoundRunnable, 5000);	// delay at the end of the round
