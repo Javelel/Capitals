@@ -3,14 +3,12 @@ package com.example.capitals;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
-import androidx.core.widget.TextViewCompat;
 
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.InputFilter;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -24,9 +22,6 @@ import android.widget.TextView;
 
 import java.util.Objects;
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 
 import me.grantland.widget.AutofitHelper;
 
@@ -35,7 +30,9 @@ public class StartGame extends AppCompatActivity {
 	TextView letterTxt;
 	Handler handler;
 	boolean[] chosenCategories;
+	int numOfCategories;
 	char chosenLetter;
+	String alphabet;
 	TextView timeLeft;
 	ScrollView gameView;
 	TableLayout tabLay;
@@ -47,13 +44,14 @@ public class StartGame extends AppCompatActivity {
 		setContentView(R.layout.activity_start_game);
 		Intent intent = getIntent();
 		chosenCategories = intent.getBooleanArrayExtra("categories");
+		numOfCategories = getNumOfCategories();
 	}
 
 	public void randomizeLetter(View view) {
 		Button randBtn = findViewById(R.id.randomizeBtn);
 		randBtn.setClickable(false);
 		letterTxt = findViewById(R.id.letterTxt);
-		String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		Random rnd = new Random();
 		int duration = rnd.nextInt(20) + 10;
 		final int[] i = {0};
@@ -62,9 +60,12 @@ public class StartGame extends AppCompatActivity {
 		handler.post(new Runnable() {
 
 			public void run() {
-				char lastLetter = i[0] ==0 ? chars.charAt(chars.length() - 1) : chars.charAt(i[0] - 1);
-				char letter = chars.charAt(i[0]++);
-				if(i[0] >= chars.length()) {
+				char lastLetter = i[0] ==0 ? alphabet.charAt(alphabet.length() - 1) : alphabet.charAt(i[0] - 1);
+				char letter = alphabet.charAt(i[0]);
+				StringBuilder alphTemp = new StringBuilder(alphabet);
+				alphTemp.deleteCharAt(i[0]++);
+				alphabet = alphTemp.toString();
+				if(i[0] >= alphabet.length()) {
 					i[0] = 0;
 				}
 				letterTxt.setText(String.valueOf(letter));
@@ -91,13 +92,15 @@ public class StartGame extends AppCompatActivity {
 
 			LinearLayout categoryTitleLayout = findViewById(R.id.category);
 
-			TextView categoryTitle = new TextView(this);
-			categoryTitle.setText("Countries");
-			categoryTitle.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
-			categoryTitle.setTextSize(30);
-			categoryTitle.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-			categoryTitle.setTextColor(Color.BLACK);
-			categoryTitleLayout.addView(categoryTitle);
+			Category[] categories = new Category[numOfCategories];
+
+			int count = 0;
+			for (int i=0; i<chosenCategories.length; i++) {
+				if(chosenCategories[i]) {
+					categories[count] = new Category(this, i);
+					categoryTitleLayout.addView(categories[count++]);
+				}
+			}
 
 			gameView = findViewById(R.id.gameView);
 			tabLay = findViewById(R.id.tabLay);
@@ -110,7 +113,8 @@ public class StartGame extends AppCompatActivity {
 		TableRow tabRow = new TableRow(this);	// 1 Row = 1 round
 		ConstraintLayout rowConLay = new ConstraintLayout(this);	// Layout to fill the TableRow
 		TextView letter = new TextView(this);	//	random letter
-		EditText category = new EditText(this);	//	answer
+		Answer category = new Answer(this, 1);	//	answer
+		Answer[] answers = new Answer[numOfCategories];
 		LinearLayout answersLay = new LinearLayout(this);	//	Layout containing all the answers
 		LinearLayout categoryAndPointsLay = new LinearLayout(this);	//	Layout with a particular answer and points form it
 		TextView points = new TextView(this);	//	points scored in a particular round
@@ -129,25 +133,6 @@ public class StartGame extends AppCompatActivity {
 		answersLay.setId(View.generateViewId());
 		categoryAndPointsLay.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
 		categoryAndPointsLay.setOrientation(LinearLayout.VERTICAL);
-
-		category.setMaxLines(2);
-		category.setMaxWidth((int) getResources().getDisplayMetrics().density * 312);
-		category.setTextSize(30);
-		category.setTextColor(Color.BLACK);
-		category.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-		InputFilter[] filterArray = new InputFilter[3];
-		filterArray[0] = new InputFilter.LengthFilter(256);
-		filterArray[1] = new InputFilter.AllCaps();
-		filterArray[2] = (source, start, end, dest, dstart, dend) -> {
-			for (int i = start; i < end; i++) {
-				if (!Character.isLetter(source.charAt(i)) && !Character.isSpaceChar(source.charAt(i))) {
-					return "";
-				}
-			}
-			return null;
-		};
-		category.setFilters(filterArray);
-		AutofitHelper.create(category);
 
 		categoryPoints.setTextColor(Color.BLACK);
 		categoryPoints.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -204,13 +189,8 @@ public class StartGame extends AppCompatActivity {
 					}
 					points.setText(categoryPoints.getText());
 					Handler endOfRoundHandler = new Handler();
-					Runnable endOfRoundRunnable = new Runnable() {
-						@Override
-						public void run() {
-							setContentView(R.layout.activity_start_game);
-						}
-					};
-					endOfRoundHandler.postDelayed(endOfRoundRunnable, 5000);
+					Runnable endOfRoundRunnable = () -> setContentView(R.layout.activity_start_game);
+					endOfRoundHandler.postDelayed(endOfRoundRunnable, 5000);	// delay at the end of the round
 				}
 			}
 		};
@@ -222,6 +202,14 @@ public class StartGame extends AppCompatActivity {
 
 	}
 
+	private int getNumOfCategories() {
+		int count = 0;
+		for (boolean category : chosenCategories) {
+			if(category)
+				count++;
+		}
+		return count;
+	}
 
 
 }

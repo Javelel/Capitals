@@ -19,4 +19,8 @@
     <string name="color">color</string>
     <string name="letter">letter</string>
     <string name="pts">Pts</string>
+    <string name="mountainsText">Mountains</string>
+    <string name="riversLakes">Rivers/Lakes</string>
+    <string name="plantsText">Plants</string>
+    <string name="animalsText">Animals</string>
 </resources>
