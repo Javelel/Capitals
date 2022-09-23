@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.text.InputFilter;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
@@ -21,6 +20,7 @@ public class Answer extends androidx.appcompat.widget.AppCompatEditText {
 		super(context);
 		this.type = type;
 
+		this.setMaxLines(2);
 		this.setMaxWidth((int) getResources().getDisplayMetrics().density * 312);
 		this.setTextSize(30);
 		this.setTextColor(Color.BLACK);

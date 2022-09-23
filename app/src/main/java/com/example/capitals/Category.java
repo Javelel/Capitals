@@ -3,8 +3,11 @@ package com.example.capitals;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.text.AutoText;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
@@ -18,12 +21,17 @@ public class Category extends androidx.appcompat.widget.AppCompatTextView {
 		super(context);
 		this.type = type;
 
-		this.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+		this.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f));
 		this.setTextSize(30);
+		if (type == 5) {
+			this.setMaxLines(2);
+		}else {
+			this.setMaxLines(1);
+		}
 		this.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 		this.setTextColor(Color.BLACK);
-		this.setName();
 		AutofitHelper.create(this);
+		this.setName();
 
 	}
 
@@ -45,7 +53,7 @@ public class Category extends androidx.appcompat.widget.AppCompatTextView {
 				this.setText("MOUNTAINS");
 				break;
 			case 5:
-				this.setText("RIVERS/LAKES");
+				this.setText("RIVERS/\nLAKES");
 				break;
 			default:
 				this.setText("ERROR");

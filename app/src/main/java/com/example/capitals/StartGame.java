@@ -21,6 +21,8 @@ import android.widget.TextView;
 import java.util.Objects;
 import java.util.Random;
 
+import me.grantland.widget.AutofitHelper;
+
 public class StartGame extends AppCompatActivity {
 
 	TextView letterTxt;
@@ -32,9 +34,13 @@ public class StartGame extends AppCompatActivity {
 	TextView timeLeft;
 	ScrollView gameView;
 	TableLayout tabLay;
-	static final int TIME_FOR_ANSWER = 10;
+	static final int TIME_FOR_ANSWER = 31;
+	static final int MAX_ROUNDS = 8;
 	int totalPoints;
 	TextView totalPointsTxt;
+	Button readyBtn;
+	int roundId;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +65,9 @@ public class StartGame extends AppCompatActivity {
 		handler.post(new Runnable() {
 
 			public void run() {
+				if(roundId >= MAX_ROUNDS-1) {
+					// End of the game
+				}
 				char lastLetter = i[0] == 0 ? alphabet.charAt(alphabet.length() - 1) : alphabet.charAt(i[0] - 1);
 				char letter = alphabet.charAt(i[0]);
 				if(i[0] >= alphabet.length()-1) {
@@ -110,10 +119,12 @@ public class StartGame extends AppCompatActivity {
 			tabLay = findViewById(R.id.tabLay);
 			timeLeft = findViewById(R.id.timeLeftTxt);
 			totalPointsTxt = findViewById(R.id.totalPts);
+			readyBtn = findViewById(R.id.readyBtn);
+			roundId = 0;
 		} else {
 			setContentView(gameView);
+			roundId++;
 		}
-		timeLeft.setText(String.valueOf(TIME_FOR_ANSWER));
 
 		TableRow tabRow = new TableRow(this);	// 1 Row = 1 round
 		ConstraintLayout rowConLay = new ConstraintLayout(this);	// Layout to fill the TableRow
@@ -153,6 +164,7 @@ public class StartGame extends AppCompatActivity {
 				smallPoints[count] = new TextView(this);
 				answersAndPointsLay[count] = new LinearLayout(this);
 
+
 				smallPoints[count].setTextSize(15);
 				smallPoints[count].setTextColor(Color.BLACK);
 				smallPoints[count].setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -164,9 +176,6 @@ public class StartGame extends AppCompatActivity {
 			}
 		}
 
-
-		//categoryAndPointsLay.addView(category);
-		//categoryAndPointsLay.addView(categoryPoints);
 
 		ConstraintSet conSet = new ConstraintSet();
 		conSet.clone(rowConLay);
@@ -198,8 +207,6 @@ public class StartGame extends AppCompatActivity {
 					timeLeft.setText(String.valueOf(Integer.parseInt((String) timeLeft.getText()) - 1));
 					timerHandler.postDelayed(this, 1000);
 				} else {
-					//category.setEnabled(false);
-
 					for (int i=0; i<numOfCategories; i++) {
 						answers[i].setEnabled(false);
 						if(answers[i].getText() != null && Objects.requireNonNull(answers[i].getText()).length() >= 1 && Objects.requireNonNull(answers[i].getText()).charAt(0) == chosenLetter) {
@@ -226,7 +233,14 @@ public class StartGame extends AppCompatActivity {
 				}
 			}
 		};
-		timerHandler.postDelayed(timerRunnable, 0);
+
+
+		View.OnClickListener ready = v -> {
+			timeLeft.setText(String.valueOf(TIME_FOR_ANSWER));
+			timerHandler.postDelayed(timerRunnable, 0);
+		};
+		readyBtn.setOnClickListener(ready);
+
 
 
 
