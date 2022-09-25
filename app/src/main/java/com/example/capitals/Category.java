@@ -22,7 +22,7 @@ public class Category extends androidx.appcompat.widget.AppCompatTextView {
 		this.type = type;
 
 		this.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f));
-		this.setTextSize(30);
+		this.setTextSize(20);
 		if (type == 5) {
 			this.setMaxLines(2);
 		}else {

@@ -25,4 +25,6 @@
     <string name="animalsText">Animals</string>
     <string name="totalPts">"TOTAL POINTS: "</string>
     <string name="ready">ready</string>
+    <string name="endScore">"Your Score: "</string>
+    <string name="backToMenu">Menu</string>
 </resources>

@@ -5,6 +5,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,8 +35,8 @@ public class StartGame extends AppCompatActivity {
 	TextView timeLeft;
 	ScrollView gameView;
 	TableLayout tabLay;
-	static final int TIME_FOR_ANSWER = 31;
-	static final int MAX_ROUNDS = 8;
+	static final int TIME_FOR_ANSWER = 3;
+	static final int MAX_ROUNDS = 2;
 	int totalPoints;
 	TextView totalPointsTxt;
 	Button readyBtn;
@@ -65,9 +66,6 @@ public class StartGame extends AppCompatActivity {
 		handler.post(new Runnable() {
 
 			public void run() {
-				if(roundId >= MAX_ROUNDS-1) {
-					// End of the game
-				}
 				char lastLetter = i[0] == 0 ? alphabet.charAt(alphabet.length() - 1) : alphabet.charAt(i[0] - 1);
 				char letter = alphabet.charAt(i[0]);
 				if(i[0] >= alphabet.length()-1) {
@@ -104,6 +102,8 @@ public class StartGame extends AppCompatActivity {
 			setContentView(R.layout.category_1);
 
 			LinearLayout categoryTitleLayout = findViewById(R.id.category);
+			ConstraintLayout mainConLay = findViewById(R.id.conLay);
+			addHorizontalLines(mainConLay);
 
 			Category[] categories = new Category[numOfCategories];
 
@@ -182,7 +182,7 @@ public class StartGame extends AppCompatActivity {
 		conSet.connect(letter.getId(), ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 32);
 		conSet.connect(letter.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 20);
 		conSet.connect(answersLay.getId(), ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 128);
-		conSet.connect(answersLay.getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 128);
+		conSet.connect(answersLay.getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 96);
 		conSet.connect(answersLay.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
 		conSet.connect(points.getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT);
 		conSet.connect(points.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 20);
@@ -227,24 +227,24 @@ public class StartGame extends AppCompatActivity {
 					points.setText(String.valueOf(pointsFromRound));
 					totalPoints += pointsFromRound;
 					totalPointsTxt.setText(String.valueOf(totalPoints));
+					if(roundId >= MAX_ROUNDS-1) {
+						// End of the game
+						endOfTheGame();
+					}
 					Handler endOfRoundHandler = new Handler();
 					Runnable endOfRoundRunnable = () -> setContentView(R.layout.activity_start_game);
-					endOfRoundHandler.postDelayed(endOfRoundRunnable, 5000);	// delay at the end of the round
+					endOfRoundHandler.postDelayed(endOfRoundRunnable, 2000);	// delay at the end of the round
 				}
 			}
 		};
 
 
 		View.OnClickListener ready = v -> {
+			readyBtn.setClickable(false);
 			timeLeft.setText(String.valueOf(TIME_FOR_ANSWER));
 			timerHandler.postDelayed(timerRunnable, 0);
 		};
 		readyBtn.setOnClickListener(ready);
-
-
-
-
-
 
 	}
 
@@ -257,5 +257,39 @@ public class StartGame extends AppCompatActivity {
 		return count;
 	}
 
+	private void addHorizontalLines(ConstraintLayout mainConLay) {
+
+		double width = 0.855 * Resources.getSystem().getDisplayMetrics().widthPixels;
+
+
+
+		for(int i=0; i<numOfCategories-1; i++) {
+			ImageView horLine = new ImageView(this);
+			horLine.setImageResource(R.color.black);
+			horLine.setId(View.generateViewId());
+			int dividerWidth = (int) getResources().getDisplayMetrics().density * 2;
+			horLine.setLayoutParams(new ViewGroup.LayoutParams(dividerWidth, 1000));
+
+			double dist = 128 + width * (((double)i+1)/(double)numOfCategories);
+
+			mainConLay.addView(horLine);
+			ConstraintSet horLineSet = new ConstraintSet();
+			horLineSet.clone(mainConLay);
+			horLineSet.connect(horLine.getId(), ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, (int) dist);
+			horLineSet.connect(horLine.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
+			horLineSet.connect(horLine.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
+			horLineSet.applyTo(mainConLay);
+
+		}
+
+
+	}
+
+	private void endOfTheGame() {
+		Intent intent = new Intent(this, EndOfTheGame.class);
+		intent.putExtra("result", totalPoints);
+		startActivity(intent);
+		finish();
+	}
 
 }
