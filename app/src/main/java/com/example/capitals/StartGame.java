@@ -108,11 +108,22 @@ public class StartGame extends AppCompatActivity {
 
 			Category[] categories = new Category[numOfCategories];
 
+			ImageView firstVertCategoryLine = new ImageView(this);
+			firstVertCategoryLine.setImageResource(R.color.black);
+			int dividerWidth = (int) getResources().getDisplayMetrics().density * 2;
+			firstVertCategoryLine.setLayoutParams(new ViewGroup.LayoutParams(dividerWidth, ViewGroup.LayoutParams.MATCH_PARENT));
+			categoryTitleLayout.addView(firstVertCategoryLine);
+
 			int count = 0;
 			for (int i=0; i<chosenCategories.length; i++) {
 				if(chosenCategories[i]) {
+					ImageView vertCategoryLine = new ImageView(this);
+					vertCategoryLine.setImageResource(R.color.black);
+					vertCategoryLine.setLayoutParams(new ViewGroup.LayoutParams(dividerWidth, ViewGroup.LayoutParams.MATCH_PARENT));
+
 					categories[count] = new Category(this, i);
 					categoryTitleLayout.addView(categories[count++]);
+					categoryTitleLayout.addView(vertCategoryLine);
 				}
 			}
 
