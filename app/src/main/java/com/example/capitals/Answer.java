@@ -20,9 +20,10 @@ public class Answer extends androidx.appcompat.widget.AppCompatEditText {
 		super(context);
 		this.type = type;
 
+		this.setLines(2);
 		this.setMaxLines(2);
 		this.setMaxWidth((int) getResources().getDisplayMetrics().density * 312);
-		this.setTextSize(30);
+		this.setTextSize(20);
 		this.setTextColor(Color.BLACK);
 		this.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 		setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f));

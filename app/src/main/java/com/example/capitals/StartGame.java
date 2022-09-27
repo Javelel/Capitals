@@ -137,10 +137,11 @@ public class StartGame extends AppCompatActivity {
 		TextView points = new TextView(this);	//	points scored in a particular round
 		TextView[] smallPoints = new TextView[numOfCategories];	// points scored on each answer
 		TableRow vertLineRow = new TableRow(this);	// row for the vertical line
-		ImageView vertLine = new ImageView(this);	// vertical line between each round
+		ImageView horLine = new ImageView(this);	// horizontal line between each round
 
 		tabLay.addView(tabRow);
 		tabRow.addView(rowConLay);
+		tabRow.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
 		letter.setText(String.valueOf(chosenLetter));
 		letter.setTextSize(30);
@@ -148,7 +149,7 @@ public class StartGame extends AppCompatActivity {
 		letter.setId(View.generateViewId());
 
 		answersLay.setId(View.generateViewId());
-		answersLay.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+		answersLay.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
 
 
 		points.setTextSize(30);
@@ -158,6 +159,7 @@ public class StartGame extends AppCompatActivity {
 		rowConLay.addView(letter);
 		rowConLay.addView(answersLay);
 		rowConLay.addView(points);
+		rowConLay.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT, 1f));
 
 		int count = 0;
 		for (int i=0; i<chosenCategories.length; i++) {
@@ -170,7 +172,7 @@ public class StartGame extends AppCompatActivity {
 				smallPoints[count].setTextSize(15);
 				smallPoints[count].setTextColor(Color.BLACK);
 				smallPoints[count].setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-				answersAndPointsLay[count].setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f));
+				answersAndPointsLay[count].setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
 				answersAndPointsLay[count].setOrientation(LinearLayout.VERTICAL);
 				answersLay.addView(answersAndPointsLay[count]);
 				answersAndPointsLay[count].addView(answers[count]);
@@ -184,22 +186,23 @@ public class StartGame extends AppCompatActivity {
 		conSet.connect(letter.getId(), ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 32);
 		conSet.connect(letter.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 20);
 		conSet.connect(answersLay.getId(), ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 128);
-		conSet.connect(answersLay.getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 96);
+		conSet.connect(answersLay.getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 176);
 		conSet.connect(answersLay.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
 		conSet.connect(points.getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT);
+		conSet.connect(points.getId(), ConstraintSet.LEFT, answersLay.getId(), ConstraintSet.RIGHT);
 		conSet.connect(points.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 20);
 		conSet.applyTo(rowConLay);
 
-		vertLine.setImageResource(R.color.black);
-		vertLine.setVisibility(View.VISIBLE);
-		vertLine.setId(View.generateViewId());
+		horLine.setImageResource(R.color.black);
+		horLine.setVisibility(View.VISIBLE);
+		horLine.setId(View.generateViewId());
 		int dividerHeight = (int) getResources().getDisplayMetrics().density * 2;
-		vertLine.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dividerHeight));
+		horLine.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dividerHeight));
 
-		ConstraintLayout vertLineLayout = new ConstraintLayout(this);
-		vertLineLayout.setLayoutParams(new TableRow.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT, 1f));
-		vertLineLayout.addView(vertLine);
-		vertLineRow.addView(vertLineLayout);
+		ConstraintLayout horLineLayout = new ConstraintLayout(this);
+		horLineLayout.setLayoutParams(new TableRow.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT, 1f));
+		horLineLayout.addView(horLine);
+		vertLineRow.addView(horLineLayout);
 
 		Handler timerHandler = new Handler();
 		Runnable timerRunnable = new Runnable() {
@@ -263,29 +266,29 @@ public class StartGame extends AppCompatActivity {
 
 		double width;
 		if (Resources.getSystem().getDisplayMetrics().heightPixels > Resources.getSystem().getDisplayMetrics().widthPixels) {
-			width = 0.855 * Resources.getSystem().getDisplayMetrics().heightPixels;
+			width = Resources.getSystem().getDisplayMetrics().heightPixels - 128 - 176;
 		} else {
-			width = 0.855 * Resources.getSystem().getDisplayMetrics().widthPixels;
+			width = Resources.getSystem().getDisplayMetrics().widthPixels - 128 - 176;
 		}
 
 
 
 		for(int i=0; i<numOfCategories-1; i++) {
-			ImageView horLine = new ImageView(this);
-			horLine.setImageResource(R.color.black);
-			horLine.setId(View.generateViewId());
+			ImageView vertLine = new ImageView(this);
+			vertLine.setImageResource(R.color.black);
+			vertLine.setId(View.generateViewId());
 			int dividerWidth = (int) getResources().getDisplayMetrics().density * 2;
-			horLine.setLayoutParams(new ViewGroup.LayoutParams(dividerWidth, 1000));
+			vertLine.setLayoutParams(new ViewGroup.LayoutParams(dividerWidth, 1000));
 
 			double dist = 128 + width * (((double)i+1)/(double)numOfCategories);
 
-			mainConLay.addView(horLine);
-			ConstraintSet horLineSet = new ConstraintSet();
-			horLineSet.clone(mainConLay);
-			horLineSet.connect(horLine.getId(), ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, (int) dist);
-			horLineSet.connect(horLine.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
-			horLineSet.connect(horLine.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
-			horLineSet.applyTo(mainConLay);
+			mainConLay.addView(vertLine);
+			ConstraintSet vertLineSet = new ConstraintSet();
+			vertLineSet.clone(mainConLay);
+			vertLineSet.connect(vertLine.getId(), ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, (int) dist);
+			vertLineSet.connect(vertLine.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
+			vertLineSet.connect(vertLine.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
+			vertLineSet.applyTo(mainConLay);
 
 		}
 
