@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -34,10 +33,10 @@ public class StartGame extends AppCompatActivity {
 	char chosenLetter;
 	String alphabet;
 	TextView timeLeft;
-	ScrollView gameView;
+	ConstraintLayout gameView;
 	TableLayout tabLay;
 	static final int TIME_FOR_ANSWER = 3;
-	static final int MAX_ROUNDS = 2;
+	static final int MAX_ROUNDS = 10;
 	int totalPoints;
 	TextView totalPointsTxt;
 	Button readyBtn;
@@ -53,13 +52,13 @@ public class StartGame extends AppCompatActivity {
 		chosenCategories = intent.getBooleanArrayExtra("categories");
 		numOfCategories = getNumOfCategories();
 		totalPoints = 0;
+		alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	}
 
 	public void randomizeLetter(View view) {
 		Button randBtn = findViewById(R.id.randomizeBtn);
 		randBtn.setClickable(false);
 		letterTxt = findViewById(R.id.letterTxt);
-		alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		Random rnd = new Random();
 		int duration = rnd.nextInt(20) + 10;
 		final int[] i = {0};
@@ -127,6 +126,7 @@ public class StartGame extends AppCompatActivity {
 			setContentView(gameView);
 			roundId++;
 		}
+		timeLeft.setText("");
 
 		TableRow tabRow = new TableRow(this);	// 1 Row = 1 round
 		ConstraintLayout rowConLay = new ConstraintLayout(this);	// Layout to fill the TableRow
