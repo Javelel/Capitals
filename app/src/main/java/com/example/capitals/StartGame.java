@@ -1,6 +1,7 @@
 package com.example.capitals;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 
@@ -46,6 +47,7 @@ public class StartGame extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 		setContentView(R.layout.activity_start_game);
 		Intent intent = getIntent();
 		chosenCategories = intent.getBooleanArrayExtra("categories");
@@ -259,7 +261,12 @@ public class StartGame extends AppCompatActivity {
 
 	private void addHorizontalLines(ConstraintLayout mainConLay) {
 
-		double width = 0.855 * Resources.getSystem().getDisplayMetrics().widthPixels;
+		double width;
+		if (Resources.getSystem().getDisplayMetrics().heightPixels > Resources.getSystem().getDisplayMetrics().widthPixels) {
+			width = 0.855 * Resources.getSystem().getDisplayMetrics().heightPixels;
+		} else {
+			width = 0.855 * Resources.getSystem().getDisplayMetrics().widthPixels;
+		}
 
 
 
